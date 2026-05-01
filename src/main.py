@@ -31,7 +31,7 @@ plt.xlabel('Days')
 plt.ylabel('Patient Count')
 plt.legend()
 plt.grid(True, alpha=0.3)
-plt.savefig('results/plots/baseline_dynamics.png')
+plt.savefig('../results/plots/baseline_dynamics.png', dpi=300)
 plt.show()
 
 # --- Sanity Check (Total Population) ---
