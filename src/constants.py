@@ -1,20 +1,20 @@
-# Constants and Parameters for the AMR Model
-# Ward 1: ICU | Ward 2: General Medicine
+# Settings for the hospital math model
+# Ward 1 is ICU, Ward 2 is General Medicine
 
-# Ward Capacities and Length of Stay
+# How many beds and how long people stay
 BEDS = [15, 60]
-STAY = [12, 5]  # Days
-DELTA = [1/s for s in STAY]  # Discharge rates
+STAY = [12, 5]  # in days
+DELTA = [1/s for s in STAY]  # People leaving the hospital
 
-# Admission Rates (Lambda = BEDS / STAY to keep population constant)
+# How many people come in (keeps the total number of patients steady)
 LAMBDA = [BEDS[i] / STAY[i] for i in range(2)]
 
-# Antibiotic & Transmission Parameters
-TAU = [0.8, 0.4]    # Antibiotic pressure (80% vs 40%)
-BETA = [0.15, 0.1]   # Transmission rate per HCW contact
-ETA = [0.4, 0.4]     # Initial hand hygiene compliance (40%)
-GAMMA = 1/45         # Natural clearance rate (approx 1.5 months)
+# Meds and spreading rates
+TAU = [0.8, 0.4]     # How much antibiotics they use (80% and 40%)
+BETA = [0.15, 0.1]   # Spreading chance when a doctor touches a patient
+ETA = [0.4, 0.4]     # Starting hand washing score (40%)
+GAMMA = 1/45         # Body fighting off the bug naturally (about 1.5 months)
 
-# Boundary Conditions (From prompt)
-M_R = 0.05           # 5% of new admissions already carry AMR
-TRANSFER_RATE = 0.1  # 10% transfer from ICU to GenMed
+# Starting rules from the prompt
+M_R = 0.05           # 5% of new guys already have the superbug
+TRANSFER_RATE = 0.1  # 10% move from ICU to normal beds

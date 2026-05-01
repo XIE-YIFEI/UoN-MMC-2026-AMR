@@ -1,29 +1,33 @@
 import numpy as np
+from constants import *
 
 def amr_ode(y, t, params):
-    # Unpack state variables (8 states)
-    # PU=Uncolonized, PN=Non-Resistant, PR=Resistant, HC=Contaminated HCW
+    # Unpack the 8 groups of people
+    # PU = Clean, PN = Normal bug, PR = Superbug, HC = Dirty hands
     PU1, PN1, PR1, HC1, PU2, PN2, PR2, HC2 = y
     
-    # HCW constants (assuming fixed number of HCWs)
+    # Healthcare workers (assuming we have a fixed number of them)
     HU1 = 5 - HC1
     HU2 = 15 - HC2
     
-    # --- Ward 1: ICU Equations ---
-    # Influx: Admissions (minus AMR) + Clearance
-    # Outflux: Infection + Discharge + Transfer
+    # --- Ward 1: ICU Math ---
+    # People coming in + clearing the bug
+    # Minus people getting sick + leaving + moving to ward 2
     dPU1 = (LAMBDA[0] * (1-M_R)) + (GAMMA + params['tau1'])*PN1 + GAMMA*PR1 \
            - params['beta1']*HC1*PU1 - (DELTA[0] + params['nu'])*PU1
     
-    dPN1 = 0 - (GAMMA + params['tau1'] + DELTA[0] + params['nu'])*PN1 # Simplified: PN enters as PU
+    # Normal bugs (keeping it simple: they turn into clean patients)
+    dPN1 = 0 - (GAMMA + params['tau1'] + DELTA[0] + params['nu'])*PN1
     
+    # Superbug patients
     dPR1 = (LAMBDA[0] * M_R) + params['beta1']*HC1*PU1 \
            - (GAMMA + DELTA[0] + params['nu'])*PR1
            
+    # Doctors getting dirty hands
     dHC1 = 0.1*(PN1 + PR1)*HU1 - params['eta1']*HC1
     
-    # --- Ward 2: General Medicine ---
-    # Note: Added 'params['nu']*PX1' terms representing transfers from ICU
+    # --- Ward 2: General Medicine Math ---
+    # Note: We add the guys moving from the ICU here
     dPU2 = (LAMBDA[1] * (1-M_R)) + params['nu']*PU1 + (GAMMA + params['tau2'])*PN2 + GAMMA*PR2 \
            - params['beta2']*HC2*PU2 - DELTA[1]*PU2
            
@@ -34,4 +38,5 @@ def amr_ode(y, t, params):
            
     dHC2 = 0.1*(PN2 + PR2)*HU2 - params['eta2']*HC2
     
+    # Send all the math back
     return [dPU1, dPN1, dPR1, dHC1, dPU2, dPN2, dPR2, dHC2]
